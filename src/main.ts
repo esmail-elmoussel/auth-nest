@@ -3,13 +3,12 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppConfig } from './types/global.types';
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const configService = app.get(ConfigService<AppConfig>);
-
-  const port = configService.get<number>('PORT', 3000);
+  app.useGlobalInterceptors(new LoggingInterceptor());
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -17,6 +16,10 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  const configService = app.get(ConfigService<AppConfig>);
+
+  const port = configService.get<number>('PORT', 3000);
 
   await app.listen(port);
 }
