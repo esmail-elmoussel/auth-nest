@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { AuthRepository } from './auth.repository';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { HashUtility } from 'src/auth/utils/hash.utility';
+import { HashUtility } from '../auth/utils/hash.utility';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from './entities/user.entity';
