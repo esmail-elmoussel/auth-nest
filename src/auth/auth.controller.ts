@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Logger, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { LoginUserDto } from './dtos/login-user.dto';
@@ -19,11 +19,10 @@ export class AuthController {
   }
 
   @Post('/login')
+  @HttpCode(200)
   async login(@Body() body: LoginUserDto) {
-    const registeredUser = await this.authService.login(body);
+    const accessToken = await this.authService.login(body);
 
-    this.logger.log(`User ${registeredUser.id} registered successfully!`);
-
-    return registeredUser;
+    return { accessToken };
   }
 }

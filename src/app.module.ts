@@ -14,6 +14,7 @@ import { validateEnvVariables } from './config';
       validate: validateEnvVariables,
     }),
     TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
       useFactory: (configService: ConfigService<AppConfig>) => ({
         type: 'mongodb',
         host: configService.get('DATABASE_HOST'),
@@ -22,7 +23,6 @@ import { validateEnvVariables } from './config';
         autoLoadEntities: true,
         synchronize: true,
       }),
-      inject: [ConfigService],
     }),
     AuthModule,
   ],

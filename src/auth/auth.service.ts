@@ -3,6 +3,8 @@ import { AuthRepository } from './auth.repository';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { HashUtility } from 'src/auth/utils/hash.utility';
 import { LoginUserDto } from './dtos/login-user.dto';
+import { JwtService } from '@nestjs/jwt';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -11,9 +13,10 @@ export class AuthService {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly hashUtility: HashUtility,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async register(createUserDto: CreateUserDto) {
+  async register(createUserDto: CreateUserDto): Promise<User> {
     const user = await this.authRepository.findOneByEmail(createUserDto.email);
 
     if (user) {
@@ -24,7 +27,7 @@ export class AuthService {
 
     const hashedPassword = await this.hashUtility.hash(createUserDto.password);
 
-    const newUser = await this.authRepository.create({
+    const newUser: User = await this.authRepository.create({
       name: createUserDto.name,
       email: createUserDto.email,
       password: hashedPassword,
@@ -35,7 +38,12 @@ export class AuthService {
     return newUser;
   }
 
-  async login(loginUserDto: LoginUserDto) {
+  /**
+   * Login user
+   * @param loginUserDto
+   * @returns user access token
+   */
+  async login(loginUserDto: LoginUserDto): Promise<string> {
     const user = await this.authRepository.findOneByEmail(loginUserDto.email);
 
     if (!user) {
@@ -57,6 +65,10 @@ export class AuthService {
 
     this.logger.log(`User ${user.id} logged in successfully!`);
 
-    return user;
+    const payload = { userId: user.id };
+
+    const accessToken = await this.jwtService.signAsync(payload);
+
+    return accessToken;
   }
 }
