@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { AuthRepository } from './auth.repository';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { HashUtility } from '../auth/utils/hash.utility';
+import { HashService } from './utils/hash.service';
 import { LoginUserDto } from './dtos/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from './entities/user.entity';
@@ -12,7 +12,7 @@ export class AuthService {
 
   constructor(
     private readonly authRepository: AuthRepository,
-    private readonly hashUtility: HashUtility,
+    private readonly hashService: HashService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -25,7 +25,7 @@ export class AuthService {
       throw new BadRequestException('Invalid credentials!'); // for security purposes, not to expose the existence of a user!
     }
 
-    const hashedPassword = await this.hashUtility.hash(createUserDto.password);
+    const hashedPassword = await this.hashService.hash(createUserDto.password);
 
     const newUser: User = await this.authRepository.create({
       name: createUserDto.name,
@@ -52,7 +52,7 @@ export class AuthService {
       throw new BadRequestException('Invalid credentials!'); // for security purposes, not to expose the existence of a user!
     }
 
-    const isPasswordCorrect = await this.hashUtility.validate(
+    const isPasswordCorrect = await this.hashService.validate(
       loginUserDto.password,
       user.password,
     );

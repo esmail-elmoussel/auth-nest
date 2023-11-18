@@ -3,7 +3,7 @@ import { promisify } from 'util';
 
 const scrypt = promisify(_scrypt);
 
-export class HashUtility {
+export class HashService {
   /**
    * Hash plain text strings
    * @param plainTextPassword
@@ -19,6 +19,12 @@ export class HashUtility {
     return saltWithHash;
   }
 
+  /**
+   * Function return weather or not plainTextPassword and saltWithHash combination is valid
+   * @param plainTextPassword
+   * @param saltWithHash
+   * @returns isValid boolean determine if plainTextPassword and saltWithHash combination is valid
+   */
   async validate(
     plainTextPassword: string,
     saltWithHash: string,

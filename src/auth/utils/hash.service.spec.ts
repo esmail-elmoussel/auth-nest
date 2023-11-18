@@ -1,23 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HashUtility } from './hash.utility';
+import { HashService } from './hash.service';
 
-describe('HashUtility', () => {
-  let hashUtility: HashUtility;
+describe('HashService', () => {
+  let hashService: HashService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [HashUtility],
+      providers: [HashService],
     }).compile();
 
-    hashUtility = module.get<HashUtility>(HashUtility);
+    hashService = module.get<HashService>(HashService);
   });
 
   it('should be defined', () => {
-    expect(hashUtility).toBeDefined();
+    expect(hashService).toBeDefined();
   });
 
   it('should hash password correctly', async () => {
-    const saltWithHash = await hashUtility.hash('123');
+    const saltWithHash = await hashService.hash('123');
 
     const [salt, hash] = saltWithHash.split('.');
 
@@ -27,23 +27,23 @@ describe('HashUtility', () => {
   });
 
   it('should fail due to wrong password', async () => {
-    const saltWithHash = await hashUtility.hash('123');
+    const saltWithHash = await hashService.hash('123');
 
-    const isValid = await hashUtility.validate('1233', saltWithHash);
+    const isValid = await hashService.validate('1233', saltWithHash);
 
     expect(isValid).toBe(false);
   });
 
   it('should fail due to invalid hash', async () => {
-    const isValid = await hashUtility.validate('123', 'invalid hash');
+    const isValid = await hashService.validate('123', 'invalid hash');
 
     expect(isValid).toBe(false);
   });
 
   it('should validate password correctly', async () => {
-    const saltWithHash = await hashUtility.hash('123');
+    const saltWithHash = await hashService.hash('123');
 
-    const isValid = await hashUtility.validate('123', saltWithHash);
+    const isValid = await hashService.validate('123', saltWithHash);
 
     expect(isValid).toBe(true);
   });

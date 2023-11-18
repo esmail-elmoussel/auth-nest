@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { HashUtility } from './utils/hash.utility';
+import { HashService } from './utils/hash.service';
 import { AuthRepository } from './auth.repository';
 import { JwtService } from '@nestjs/jwt';
 import { authRepositoryMock } from './__mocks__/auth.repository.mock';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { User } from './entities/user.entity';
 import { BadRequestException } from '@nestjs/common';
-import { hashUtilityMock } from './utils/__mocks__/hash.utility.mock';
+import { hashServiceMock } from './utils/__mocks__/hash.service.mock';
 import { jwtMock } from './__mocks__/jwt.service.mock';
 import { LoginUserDto } from './dtos/login-user.dto';
 
@@ -19,7 +19,7 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         { provide: AuthRepository, useValue: authRepositoryMock },
-        { provide: HashUtility, useValue: hashUtilityMock },
+        { provide: HashService, useValue: hashServiceMock },
         { provide: JwtService, useValue: jwtMock },
       ],
     }).compile();
@@ -66,7 +66,7 @@ describe('AuthService', () => {
         ...createUserDto,
       } as unknown as User);
 
-      hashUtilityMock.hash.mockReturnValue('hashedPassword');
+      hashServiceMock.hash.mockReturnValue('hashedPassword');
 
       await service.register(createUserDto);
 
@@ -128,7 +128,7 @@ describe('AuthService', () => {
         ...createUserDto,
       });
 
-      hashUtilityMock.validate.mockReturnValueOnce(false);
+      hashServiceMock.validate.mockReturnValueOnce(false);
 
       try {
         await service.login({
@@ -143,7 +143,7 @@ describe('AuthService', () => {
       }
     });
 
-    it('hash utility should be called with the right params', async () => {
+    it('should call hash service with the right params', async () => {
       const loginUserDto: LoginUserDto = {
         email: 'test@test.com',
         password: '123456',
@@ -155,14 +155,14 @@ describe('AuthService', () => {
         password: 'hashedPassword',
       });
 
-      hashUtilityMock.validate.mockReturnValueOnce(true);
+      hashServiceMock.validate.mockReturnValueOnce(true);
 
       jwtMock.signAsync.mockReturnValueOnce('token');
 
       await service.login(loginUserDto);
 
-      expect(hashUtilityMock.validate).toHaveBeenCalled();
-      expect(hashUtilityMock.validate).toHaveBeenCalledWith(
+      expect(hashServiceMock.validate).toHaveBeenCalled();
+      expect(hashServiceMock.validate).toHaveBeenCalledWith(
         loginUserDto.password,
         'hashedPassword',
       );
@@ -180,7 +180,7 @@ describe('AuthService', () => {
         ...createUserDto,
       });
 
-      hashUtilityMock.validate.mockReturnValueOnce(true);
+      hashServiceMock.validate.mockReturnValueOnce(true);
 
       jwtMock.signAsync.mockReturnValueOnce('token');
 
