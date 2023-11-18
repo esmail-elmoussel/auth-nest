@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { AuthRepository } from './auth.repository';
 import { User } from './entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HashService } from 'src/auth/utils/hash.service';
+import { HashService } from '../auth/utils/hash.service';
 import { JwtModule } from '@nestjs/jwt';
 import { AppConfig } from 'src/types/global.types';
 import { ConfigService } from '@nestjs/config';
