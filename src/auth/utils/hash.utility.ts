@@ -4,6 +4,11 @@ import { promisify } from 'util';
 const scrypt = promisify(_scrypt);
 
 export class HashUtility {
+  /**
+   * Hash plain text strings
+   * @param plainTextPassword
+   * @returns saltWithHash a single string concatenated with this format `salt.hash`
+   */
   async hash(plainTextPassword: string): Promise<string> {
     const salt = randomBytes(8).toString('hex');
 
