@@ -1,10 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { AuthRepository } from './auth.repository';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { HashUtility } from 'src/auth/utils/hash.utility';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly hashUtility: HashUtility,
@@ -14,6 +16,8 @@ export class AuthService {
     const user = await this.authRepository.findOneByEmail(createUserDto.email);
 
     if (user) {
+      this.logger.log(`user ${user.id} already exists!`);
+
       throw new BadRequestException('Account already exists!');
     }
 
@@ -24,6 +28,8 @@ export class AuthService {
       email: createUserDto.email,
       password: hashedPassword,
     });
+
+    this.logger.log(`user ${newUser.id} created successfully!`);
 
     return newUser;
   }
