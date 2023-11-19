@@ -4,7 +4,7 @@ import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
-describe('AppController (e2e)', () => {
+describe('App (e2e)', () => {
   let app: INestApplication;
   let mongodb: MongoMemoryServer;
 
