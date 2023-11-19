@@ -4,3 +4,13 @@ export interface AppConfig {
   DATABASE_URL: number;
   JWT_SECRET: string;
 }
+
+export interface DecodedToken {
+  userId: string;
+}
+
+export interface RequestWithUser extends Request {
+  user: {
+    id: string;
+  };
+}
