@@ -3,7 +3,6 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { LoggingInterceptor } from '../src/interceptors/logging.interceptor';
 
 const validPassword = 'pas$w0rd12';
 
@@ -23,8 +22,6 @@ describe('Auth (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-
-    app.useGlobalInterceptors(new LoggingInterceptor());
 
     app.useGlobalPipes(
       new ValidationPipe({
