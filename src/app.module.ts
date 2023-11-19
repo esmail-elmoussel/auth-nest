@@ -12,14 +12,13 @@ import { validateEnvVariables } from './config';
     ConfigModule.forRoot({
       isGlobal: true,
       validate: validateEnvVariables,
+      envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService<AppConfig>) => ({
         type: 'mongodb',
-        host: configService.get('DATABASE_HOST'),
-        port: configService.get('DATABASE_PORT'),
-        database: configService.get('DATABASE_NAME'),
+        url: configService.get('DATABASE_URL'),
         autoLoadEntities: true,
         synchronize: true,
       }),

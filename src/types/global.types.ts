@@ -1,7 +1,6 @@
 export interface AppConfig {
+  NODE_ENV: string;
   PORT: number;
-  DATABASE_HOST: string;
-  DATABASE_PORT: number;
-  DATABASE_NAME: string;
+  DATABASE_URL: number;
   JWT_SECRET: string;
 }
