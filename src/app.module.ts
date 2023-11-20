@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppConfig } from './types/global.types';
 import { validateEnvVariables } from './config';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 @Module({
   imports: [
@@ -16,12 +17,19 @@ import { validateEnvVariables } from './config';
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService<AppConfig>) => ({
-        type: 'mongodb',
-        url: configService.get('DATABASE_URL'),
-        autoLoadEntities: true,
-        synchronize: true,
-      }),
+      useFactory: async (configService: ConfigService<AppConfig>) => {
+        // Connect to an In-memory mongo instance for testing purposes!
+        // TODO: connect to a real database
+        const mongodb = await MongoMemoryServer.create();
+        const mongoUri = mongodb.getUri();
+
+        return {
+          type: 'mongodb',
+          url: mongoUri || configService.get('DATABASE_URL'),
+          autoLoadEntities: true,
+          synchronize: true,
+        };
+      },
     }),
     AuthModule,
   ],
